@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me - Ajaysingh Rathore</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+       /* About Section */
+.about {
+    padding: 100px 2rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.about-me h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+    text-align: center;
+    position: relative;
+}
+
+.about-me h1::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--primary-color);
+    margin: 1rem auto 0;
+    border-radius: 2px;
+}
+
+.about-content {
+    display: flex;
+    gap: 4rem;
+    align-items: flex-start;
+    background-color: var(--bg-color);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.about-text {
+    flex: 1;
+}
+
+.about-text p {
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    line-height: 1.8;
+}
+
+.about-text h2 {
+    margin: 2.5rem 0 1.5rem;
+    color: var(--primary-color);
+    font-size: 1.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.about-text ul {
+    list-style: none;
+    margin-left: 1rem;
+}
+
+.about-text li {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    position: relative;
+    color: var(--text-color);
+}
+
+.about-text li::before {
+    content: "▹";
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.about-image {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+}
+
+.image-placeholder {
+    background-color: var(--accent-color);
+    border-radius: 15px;
+    padding-top: 120%;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    background-image: url('profilepic.jpg'); /* Add your image here */
+    background-size: cover;
+    background-position: center;
+}
+
+.image-placeholder:hover {
+    transform: scale(1.02);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .about-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .about-image {
+        order: -1;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .about-me h1 {
+        font-size: 2rem;
+    }
+
+    .about-text h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about {
+        padding-top: 80px;
+    }
+    
+    .about-content {
+        padding: 1.5rem;
+    }
+    
+    .image-placeholder {
+        padding-top: 100%;
+    }
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <a href="/">AR</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about.html" class="active">About</a></li>
+                <li><a href="/projects.html">Projects</a></li>
+                <li><a href="/blog.html">Blog</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+    <main class="about">
+        <section class="about-me">
+            <h1>About Me</h1>
+            <div class="about-content">
+                <div class="about-text">
+                    <p class="intro">Hello! I'm Ajaysingh Rathore, a passionate Frontend Developer based in the beautiful state of Goa, India. Currently pursuing my BCA (Bachelor of Computer Applications) in my second year, I'm dedicated to creating engaging and user-friendly web experiences.</p>
+                    <p>My journey in web development started with a curiosity about how websites work, and it has evolved into a deep passion for creating beautiful, functional interfaces that users love to interact with. I specialize in crafting responsive, accessible, and performant web applications using modern web technologies.</p>
+                    
+                    <h2>Education</h2>
+                    <ul>
+                        <li>Bachelor of Computer Applications (BCA) - Second Year</li>
+                        <li>Higher Secondary School Certificate (HSSC) - Computer Science</li>
+                    </ul>
+                    
+                    <h2>Interests & Expertise</h2>
+                    <ul>
+                        <li>Web Development (HTML, CSS, JavaScript)</li>
+                        <li>UI/UX Design & Prototyping</li>
+                        <li>Technical Writing & Documentation</li>
+                        <li>Open Source Contribution</li>
+                        <li>Responsive Web Design</li>
+                        <li>Web Performance Optimization</li>
+                    </ul>
+                </div>
+                <div class="about-image">
+                    <div class="image-placeholder"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
