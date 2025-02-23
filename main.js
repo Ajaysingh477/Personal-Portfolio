@@ -71,29 +71,43 @@ function isValidEmail(email) {
 // Blog Posts
 const blogGrid = document.getElementById('blog-posts');
 
-const mediumFeedURL = "https://medium.com/feed/@rathoresinghajay963"; // Your RSS feed
-const apiKey = "7i7dhwzvvcy9gkvpaaje6feqrkuxtlhio9er3qeh"; // Your API key
+const mediumFeedURL = "https://medium.com/feed/@rathoresinghajay963";
+const apiKey = "7i7dhwzvvcy9gkvpaaje6feqrkuxtlhio9er3qeh";
 
 async function fetchMediumPosts() {
     try {
+        console.log("Fetching Medium Posts...");
+
         const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedURL)}&api_key=${apiKey}&count=10`);
         const data = await response.json();
 
-        if (data.status !== "ok") throw new Error("Failed to fetch Medium posts");
+        console.log("API Response:", data); // Debugging log
+
+        if (!data || data.status !== "ok") {
+            throw new Error("Failed to fetch Medium posts");
+        }
 
         blogGrid.innerHTML = ""; // Clear previous blog posts
 
         data.items.forEach(post => {
+            console.log("Processing Post:", post.title);
+
             const blogCard = document.createElement("div");
             blogCard.className = "blog-card";
 
-            // Extract first image
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = post.content;
-            const imgTag = tempDiv.querySelector("img");
-            let imageUrl = imgTag ? imgTag.src : "default-placeholder.jpg";
 
-            // Remove image from content
+            // Extract first image from Medium content (handle <figure> images)
+            const imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img"); 
+            let imageUrl = imgTag ? imgTag.src : post.thumbnail; 
+
+            // If no image is found, use a default placeholder
+            if (!imageUrl || imageUrl.trim() === "") {
+                imageUrl = "https://via.placeholder.com/300"; // Placeholder image
+            }
+
+            // Remove the image from content so it doesn't appear twice
             if (imgTag) imgTag.remove();
 
             // Extract clean text content
@@ -112,6 +126,7 @@ async function fetchMediumPosts() {
 
             blogGrid.appendChild(blogCard);
         });
+
     } catch (error) {
         console.error("Error fetching Medium posts:", error);
     }
