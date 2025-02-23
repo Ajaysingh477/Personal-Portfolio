@@ -76,12 +76,15 @@ async function fetchMediumPosts() {
     try {
         console.log("Fetching Medium Posts...");
 
-        const cacheBuster = Math.random().toString(36).substring(7); // Generates a unique cache-busting string
-
+        const cacheBuster = Math.random().toString(36).substring(7); // Unique cache-busting string
         const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedURL)}&api_key=${apiKey}&count=10&_=${cacheBuster}`);
-        
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
-        console.log("API Response:", data); // Debugging log
+        console.log("API Response:", data);
 
         if (!data || data.status !== "ok") {
             throw new Error("Failed to fetch Medium posts");
@@ -98,28 +101,32 @@ async function fetchMediumPosts() {
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = post.content;
 
-            // Extract first image from Medium content (handle <figure> images)
-            const imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img");
+            // Extract first image (handle <figure> images)
+            let imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img");
             let imageUrl = imgTag ? imgTag.src : post.thumbnail;
 
-            // If no image is found, use a default placeholder
+            // Use a default placeholder if no image is found
             if (!imageUrl || imageUrl.trim() === "") {
                 imageUrl = "https://via.placeholder.com/300"; // Placeholder image
             }
 
-            // Remove the image from content so it doesn't appear twice
+            // Remove the image from content to avoid duplication
             if (imgTag) imgTag.remove();
 
-            // Extract clean text content
-            const cleanText = tempDiv.textContent.trim().substring(0, 150) + "..."; // Limit to 150 chars
+            // Extract clean text content & limit to 150 characters
+            const cleanText = tempDiv.textContent.trim().substring(0, 150) + "...";
 
-       let blogLink = post.guid;
+            // Fixing blog link issue (forcing correct link if Medium RSS is outdated)
+            let blogLink = post.guid;
+            if (post.guid.includes("5e2a7d614b6a")) {  
+                blogLink = "https://medium.com/@rathoresinghajay963/not-impressed-just-expecting-it-unless-its-truly-new-8086641dd406"; 
+            }
 
-// Ensure only ONE override for the latest blog if Medium’s RSS is outdated
-if (post.guid.includes("5e2a7d614b6a")) {  
-    blogLink = "https://medium.com/@rathoresinghajay963/not-impressed-just-expecting-it-unless-its-truly-new-8086641dd406"; 
-}
+            console.log("Final Blog Link:", blogLink); // Debugging log
 
+            // Prevent text overflow in card
+            blogCard.style.overflow = "hidden";
+            blogCard.style.wordWrap = "break-word";
 
             // Populate blog card
             blogCard.innerHTML = `
