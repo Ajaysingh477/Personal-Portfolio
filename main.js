@@ -104,7 +104,7 @@ async function fetchMediumPosts() {
 
             // **Fix Image Extraction**
             let imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img");
-            let imageUrl = post.thumbnail || (imgTag ? imgTag.src : "");
+            let imageUrl = imgTag ? imgTag.src : "";
 
             // **If imageUrl is empty, extract manually from <content:encoded>**
             if (!imageUrl || imageUrl.trim() === "") {
@@ -119,24 +119,17 @@ async function fetchMediumPosts() {
             // **Debugging Image Extraction**
             console.log(`Post Title: ${post.title}`);
             console.log(`Extracted Image URL: ${imageUrl}`);
-            console.log(`Thumbnail URL from RSS: ${post.thumbnail}`);
 
-            // If no image is found, use a default placeholder
+            // **If no image found, use a placeholder**
             if (!imageUrl || imageUrl.trim() === "") {
-                imageUrl = "https://via.placeholder.com/300x200?text=No+Image"; // Placeholder image
+                imageUrl = "https://via.placeholder.com/300x200?text=No+Image";
             }
 
-            // Prevent broken images by adding an error fallback
+            // **Prevent broken images by adding an error fallback**
             const safeImageUrl = `"${imageUrl}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=No+Image';"`;
 
-            // Remove extracted image from content
-            if (imgTag) imgTag.remove();
-
-            // Extract clean text content & limit to 150 characters
-            const cleanText = tempDiv.textContent.trim().substring(0, 150) + "...";
-
-            // Fixing blog link issue (forcing correct link if Medium RSS is outdated)
-            let blogLink = post.link; // Use the default link
+            // **Fix blog link issue (forcing correct link if Medium’s RSS is outdated)**
+            let blogLink = post.link; // Default link from API
 
             if (post.guid.includes("5e2a7d614b6a")) {  
                 blogLink = "https://medium.com/@rathoresinghajay963/not-impressed-just-expecting-it-unless-its-truly-new-8086641dd406"; 
@@ -144,15 +137,15 @@ async function fetchMediumPosts() {
 
             console.log("Final Blog Link:", blogLink); // Debugging log
 
-            // Prevent text overflow in card
+            // **Prevent text overflow in card**
             blogCard.style.overflow = "hidden";
             blogCard.style.wordWrap = "break-word";
 
-            // Populate blog card
+            // **Populate blog card**
             blogCard.innerHTML = `
                 <img src=${safeImageUrl} alt="${post.title}" class="blog-image">
                 <h3>${post.title}</h3>
-                <p>${cleanText}</p>
+                <p>${tempDiv.textContent.trim().substring(0, 150)}...</p>
                 <p class="blog-date">${new Date(post.pubDate).toDateString()}</p>
                 <div class="project-links">
                     <a href="${blogLink}" target="_blank" class="btn primary">Read More</a>
@@ -169,4 +162,5 @@ async function fetchMediumPosts() {
 
 // Fetch and display Medium blog posts
 fetchMediumPosts();
+
 
