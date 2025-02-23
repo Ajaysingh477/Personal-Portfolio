@@ -78,11 +78,10 @@ async function fetchMediumPosts() {
     try {
         console.log("Fetching Medium Posts...");
 
-       const cacheBuster = new Date().getTime(); // Unique timestamp to bypass cache
-       const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedURL)}&api_key=${apiKey}&count=10&cache_bust=${cacheBuster}`);
-
+        const cacheBuster = new Date().getTime(); // Unique timestamp to bypass cache
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedURL)}&api_key=${apiKey}&count=10&cache_bust=${cacheBuster}`);
+        
         const data = await response.json();
-
         console.log("API Response:", data); // Debugging log
 
         if (!data || data.status !== "ok") {
@@ -92,7 +91,8 @@ async function fetchMediumPosts() {
         blogGrid.innerHTML = ""; // Clear previous blog posts
 
         data.items.forEach(post => {
-            console.log("Processing Post:", post.title);
+            // Log each post to verify content
+            console.log("Processing Post:", post.title, post);
 
             const blogCard = document.createElement("div");
             blogCard.className = "blog-card";
@@ -122,7 +122,7 @@ async function fetchMediumPosts() {
                 <p>${cleanText}</p>
                 <p class="blog-date">${new Date(post.pubDate).toDateString()}</p>
                 <div class="project-links">
- <a href="${post.guid}" target="_blank" class="btn primary">Read More</a>
+                    <a href="${post.guid}" target="_blank" class="btn primary">Read More</a>
                 </div>
             `;
 
