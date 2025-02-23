@@ -122,7 +122,7 @@ async function fetchMediumPosts() {
                 <p>${cleanText}</p>
                 <p class="blog-date">${new Date(post.pubDate).toDateString()}</p>
                 <div class="project-links">
-                    <a href="${post.link}" target="_blank" class="btn primary">Read More</a>
+ <a href="${post.guid}" target="_blank" class="btn primary">Read More</a>
                 </div>
             `;
 
