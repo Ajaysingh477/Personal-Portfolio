@@ -78,7 +78,9 @@ async function fetchMediumPosts() {
     try {
         console.log("Fetching Medium Posts...");
 
-        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedURL)}&api_key=${apiKey}&count=10`);
+       const cacheBuster = new Date().getTime(); // Unique timestamp to bypass cache
+       const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedURL)}&api_key=${apiKey}&count=10&cache_bust=${cacheBuster}`);
+
         const data = await response.json();
 
         console.log("API Response:", data); // Debugging log
