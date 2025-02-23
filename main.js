@@ -51,7 +51,6 @@ if (contactForm) {
         }
 
         if (isValid) {
-            // Simulate form submission
             alert('Message sent successfully!');
             contactForm.reset();
         }
@@ -70,7 +69,6 @@ function isValidEmail(email) {
 
 // Blog Posts
 const blogGrid = document.getElementById('blog-posts');
-
 const mediumFeedURL = "https://medium.com/feed/@rathoresinghajay963";
 const apiKey = "7i7dhwzvvcy9gkvpaaje6feqrkuxtlhio9er3qeh";
 
@@ -79,7 +77,7 @@ async function fetchMediumPosts() {
         console.log("Fetching Medium Posts...");
 
         const cacheBuster = new Date().getTime(); // Unique timestamp to bypass cache
-        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedURL)}&api_key=${apiKey}&count=10&cache_bust=${cacheBuster}`);
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedURL)}&api_key=${apiKey}&count=10&_=${cacheBuster}`);
         
         const data = await response.json();
         console.log("API Response:", data); // Debugging log
@@ -91,7 +89,6 @@ async function fetchMediumPosts() {
         blogGrid.innerHTML = ""; // Clear previous blog posts
 
         data.items.forEach(post => {
-            // Log each post to verify content
             console.log("Processing Post:", post.title, post);
 
             const blogCard = document.createElement("div");
@@ -101,8 +98,8 @@ async function fetchMediumPosts() {
             tempDiv.innerHTML = post.content;
 
             // Extract first image from Medium content (handle <figure> images)
-            const imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img"); 
-            let imageUrl = imgTag ? imgTag.src : post.thumbnail; 
+            const imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img");
+            let imageUrl = imgTag ? imgTag.src : post.thumbnail;
 
             // If no image is found, use a default placeholder
             if (!imageUrl || imageUrl.trim() === "") {
@@ -115,6 +112,13 @@ async function fetchMediumPosts() {
             // Extract clean text content
             const cleanText = tempDiv.textContent.trim().substring(0, 150) + "..."; // Limit to 150 chars
 
+            // Fixing blog link issue (forcing correct link if Medium hasn't updated it)
+            let blogLink = post.guid;
+
+            if (post.title.includes("Not Impressed, Just Expecting It")) {
+                blogLink = "https://medium.com/@rathoresinghajay963/correct-blog-link"; // Replace with actual link
+            }
+
             // Populate blog card
             blogCard.innerHTML = `
                 <img src="${imageUrl}" alt="${post.title}" class="blog-image">
@@ -122,7 +126,7 @@ async function fetchMediumPosts() {
                 <p>${cleanText}</p>
                 <p class="blog-date">${new Date(post.pubDate).toDateString()}</p>
                 <div class="project-links">
-                    <a href="${post.guid}" target="_blank" class="btn primary">Read More</a>
+                    <a href="${blogLink}" target="_blank" class="btn primary">Read More</a>
                 </div>
             `;
 
