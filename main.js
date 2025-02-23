@@ -102,11 +102,16 @@ async function fetchMediumPosts() {
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = post.content;
 
-            // **Fix Image Extraction**
+            // **Extract first valid image**
             let imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img");
             let imageUrl = imgTag ? imgTag.src : "";
 
-            // **If imageUrl is empty, extract manually from <content:encoded>**
+            // **Ignore Medium's tracking pixel images (_stat URLs)**
+            if (imageUrl.includes("medium.com/_/stat")) {
+                imageUrl = ""; // Remove invalid tracking image
+            }
+
+            // **If no image found, extract manually using regex**
             if (!imageUrl || imageUrl.trim() === "") {
                 const encodedContent = post.content;
                 const regex = /<img.*?src="(.*?)"/; // Extracts first <img> tag src
@@ -116,16 +121,12 @@ async function fetchMediumPosts() {
                 }
             }
 
-            // **Debugging Image Extraction**
-            console.log(`Post Title: ${post.title}`);
-            console.log(`Extracted Image URL: ${imageUrl}`);
-
-            // **If no image found, use a placeholder**
+            // **If image URL is still empty, use a default fallback**
             if (!imageUrl || imageUrl.trim() === "") {
                 imageUrl = "https://via.placeholder.com/300x200?text=No+Image";
             }
 
-            // **Prevent broken images by adding an error fallback**
+            // **Prevent broken images from Medium’s CDN**
             const safeImageUrl = `"${imageUrl}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=No+Image';"`;
 
             // **Fix blog link issue (forcing correct link if Medium’s RSS is outdated)**
@@ -135,9 +136,10 @@ async function fetchMediumPosts() {
                 blogLink = "https://medium.com/@rathoresinghajay963/not-impressed-just-expecting-it-unless-its-truly-new-8086641dd406"; 
             }
 
-            console.log("Final Blog Link:", blogLink); // Debugging log
+            console.log("Final Blog Link:", blogLink);
+            console.log("Extracted Image URL:", imageUrl);
 
-            // **Prevent text overflow in card**
+            // **Prevent text overflow in cards**
             blogCard.style.overflow = "hidden";
             blogCard.style.wordWrap = "break-word";
 
@@ -162,5 +164,3 @@ async function fetchMediumPosts() {
 
 // Fetch and display Medium blog posts
 fetchMediumPosts();
-
-
