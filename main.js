@@ -90,41 +90,50 @@ async function fetchMediumPosts() {
         blogGrid.innerHTML = ""; // Clear previous blog posts
 
         data.items.forEach(post => {
-            console.log("Processing Post:", post.title);
+            fetch(post.link)
+                .then(response => {
+                    if (response.status === 410) {
+                        console.warn("Skipping deleted blog:", post.title);
+                        return; // Skip this blog post
+                    }
 
-            const blogCard = document.createElement("div");
-            blogCard.className = "blog-card";
+                    console.log("Processing Post:", post.title);
 
-            const tempDiv = document.createElement("div");
-            tempDiv.innerHTML = post.content;
+                    const blogCard = document.createElement("div");
+                    blogCard.className = "blog-card";
 
-            // Extract first image from Medium content (handle <figure> images)
-            const imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img"); 
-            let imageUrl = imgTag ? imgTag.src : post.thumbnail; 
+                    const tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = post.content;
 
-            // If no image is found, use a default placeholder
-            if (!imageUrl || imageUrl.trim() === "") {
-                imageUrl = "https://via.placeholder.com/300"; // Placeholder image
-            }
+                    // Extract first image from Medium content (handle <figure> images)
+                    const imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img"); 
+                    let imageUrl = imgTag ? imgTag.src : post.thumbnail; 
 
-            // Remove the image from content so it doesn't appear twice
-            if (imgTag) imgTag.remove();
+                    // If no image is found, use a default placeholder
+                    if (!imageUrl || imageUrl.trim() === "") {
+                        imageUrl = "https://via.placeholder.com/300"; // Placeholder image
+                    }
 
-            // Extract clean text content
-            const cleanText = tempDiv.textContent.trim().substring(0, 150) + "..."; // Limit to 150 chars
+                    // Remove the image from content so it doesn't appear twice
+                    if (imgTag) imgTag.remove();
 
-            // Populate blog card
-            blogCard.innerHTML = `
-                <img src="${imageUrl}" alt="${post.title}" class="blog-image">
-                <h3>${post.title}</h3>
-                <p>${cleanText}</p>
-                <p class="blog-date">${new Date(post.pubDate).toDateString()}</p>
-                <div class="project-links">
-                    <a href="${post.link}" target="_blank" class="btn primary">Read More</a>
-                </div>
-            `;
+                    // Extract clean text content
+                    const cleanText = tempDiv.textContent.trim().substring(0, 150) + "..."; // Limit to 150 chars
 
-            blogGrid.appendChild(blogCard);
+                    // Populate blog card
+                    blogCard.innerHTML = `
+                        <img src="${imageUrl}" alt="${post.title}" class="blog-image">
+                        <h3>${post.title}</h3>
+                        <p>${cleanText}</p>
+                        <p class="blog-date">${new Date(post.pubDate).toDateString()}</p>
+                        <div class="project-links">
+                            <a href="${post.link}" target="_blank" class="btn primary">Read More</a>
+                        </div>
+                    `;
+
+                    blogGrid.appendChild(blogCard);
+                })
+                .catch(error => console.error("Error checking blog post:", error));
         });
 
     } catch (error) {
