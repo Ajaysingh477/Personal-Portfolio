@@ -103,13 +103,16 @@ async function fetchMediumPosts() {
             tempDiv.innerHTML = post.content;
 
             // **Extract first valid image**
-            let imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img");
-            let imageUrl = imgTag ? imgTag.src : "";
+let imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img");
+let imageUrl = imgTag ? imgTag.src : "";
 
-            // **Ignore Medium's tracking pixel images (_stat URLs)**
-            if (imageUrl.includes("medium.com/_/stat")) {
-                imageUrl = ""; // Remove invalid tracking image
-            }
+// **Ignore Medium's tracking pixel images (_stat URLs)**
+if (!imageUrl || imageUrl.includes("medium.com/_/stat")) {
+    console.log("Using thumbnail for:", post.title);
+    imageUrl = post.thumbnail && post.thumbnail.trim() !== "" 
+               ? post.thumbnail 
+               : "https://via.placeholder.com/300x200?text=No+Image"; // Fallback image
+}
 
             // **If no image found, extract manually using regex**
             if (!imageUrl || imageUrl.trim() === "") {
