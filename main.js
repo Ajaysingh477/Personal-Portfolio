@@ -68,6 +68,7 @@ function isValidEmail(email) {
 }
 
 // Blog Posts
+// Blog Posts
 const blogGrid = document.getElementById('blog-posts');
 const mediumFeedURL = "https://medium.com/feed/@rathoresinghajay963";
 const apiKey = "7i7dhwzvvcy9gkvpaaje6feqrkuxtlhio9er3qeh";
@@ -103,11 +104,11 @@ async function fetchMediumPosts() {
 
             // Extract first image (handle <figure> images)
             let imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img");
-            let imageUrl = imgTag ? imgTag.src : post.thumbnail;
+            let imageUrl = post.thumbnail || (imgTag ? imgTag.src : "");
 
-            // Use a default placeholder if no image is found
+            // If no image is found, use a default placeholder
             if (!imageUrl || imageUrl.trim() === "") {
-                imageUrl = "https://via.placeholder.com/300"; // Placeholder image
+                imageUrl = "https://via.placeholder.com/300x200?text=No+Image"; // Placeholder image
             }
 
             // Remove the image from content to avoid duplication
@@ -117,7 +118,8 @@ async function fetchMediumPosts() {
             const cleanText = tempDiv.textContent.trim().substring(0, 150) + "...";
 
             // Fixing blog link issue (forcing correct link if Medium RSS is outdated)
-            let blogLink = post.guid;
+            let blogLink = post.link; // Use the default link
+
             if (post.guid.includes("5e2a7d614b6a")) {  
                 blogLink = "https://medium.com/@rathoresinghajay963/not-impressed-just-expecting-it-unless-its-truly-new-8086641dd406"; 
             }
@@ -130,7 +132,7 @@ async function fetchMediumPosts() {
 
             // Populate blog card
             blogCard.innerHTML = `
-                <img src="${imageUrl}" alt="${post.title}" class="blog-image">
+                <img src="${imageUrl}" alt="${post.title}" class="blog-image" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=No+Image';">
                 <h3>${post.title}</h3>
                 <p>${cleanText}</p>
                 <p class="blog-date">${new Date(post.pubDate).toDateString()}</p>
@@ -149,3 +151,4 @@ async function fetchMediumPosts() {
 
 // Fetch and display Medium blog posts
 fetchMediumPosts();
+
