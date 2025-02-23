@@ -76,7 +76,8 @@ async function fetchMediumPosts() {
     try {
         console.log("Fetching Medium Posts...");
 
-        const cacheBuster = new Date().getTime(); // Unique timestamp to bypass cache
+        const cacheBuster = Math.random().toString(36).substring(7); // Generates a unique cache-busting string
+
         const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedURL)}&api_key=${apiKey}&count=10&_=${cacheBuster}`);
         
         const data = await response.json();
@@ -112,12 +113,13 @@ async function fetchMediumPosts() {
             // Extract clean text content
             const cleanText = tempDiv.textContent.trim().substring(0, 150) + "..."; // Limit to 150 chars
 
-            // Fixing blog link issue (forcing correct link if Medium hasn't updated it)
-            let blogLink = post.guid;
+       let blogLink = post.guid;
 
-            if (post.title.includes("Not Impressed, Just Expecting It")) {
-                blogLink = "https://medium.com/@rathoresinghajay963/correct-blog-link"; // Replace with actual link
-            }
+// Ensure only ONE override for the latest blog if Medium’s RSS is outdated
+if (post.guid.includes("5e2a7d614b6a")) {  
+    blogLink = "https://medium.com/@rathoresinghajay963/not-impressed-just-expecting-it-unless-its-truly-new-8086641dd406"; 
+}
+
 
             // Populate blog card
             blogCard.innerHTML = `
