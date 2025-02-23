@@ -102,16 +102,34 @@ async function fetchMediumPosts() {
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = post.content;
 
-            // Extract first image (handle <figure> images)
+            // **Fix Image Extraction**
             let imgTag = tempDiv.querySelector("figure img") || tempDiv.querySelector("img");
             let imageUrl = post.thumbnail || (imgTag ? imgTag.src : "");
+
+            // **If imageUrl is empty, extract manually from <content:encoded>**
+            if (!imageUrl || imageUrl.trim() === "") {
+                const encodedContent = post.content;
+                const regex = /<img.*?src="(.*?)"/; // Extracts first <img> tag src
+                const match = encodedContent.match(regex);
+                if (match && match[1]) {
+                    imageUrl = match[1];
+                }
+            }
+
+            // **Debugging Image Extraction**
+            console.log(`Post Title: ${post.title}`);
+            console.log(`Extracted Image URL: ${imageUrl}`);
+            console.log(`Thumbnail URL from RSS: ${post.thumbnail}`);
 
             // If no image is found, use a default placeholder
             if (!imageUrl || imageUrl.trim() === "") {
                 imageUrl = "https://via.placeholder.com/300x200?text=No+Image"; // Placeholder image
             }
 
-            // Remove the image from content to avoid duplication
+            // Prevent broken images by adding an error fallback
+            const safeImageUrl = `"${imageUrl}" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=No+Image';"`;
+
+            // Remove extracted image from content
             if (imgTag) imgTag.remove();
 
             // Extract clean text content & limit to 150 characters
@@ -132,7 +150,7 @@ async function fetchMediumPosts() {
 
             // Populate blog card
             blogCard.innerHTML = `
-                <img src="${imageUrl}" alt="${post.title}" class="blog-image" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=No+Image';">
+                <img src=${safeImageUrl} alt="${post.title}" class="blog-image">
                 <h3>${post.title}</h3>
                 <p>${cleanText}</p>
                 <p class="blog-date">${new Date(post.pubDate).toDateString()}</p>
